@@ -338,6 +338,7 @@ class OBJECT_OT_NewStrip(bpy.types.Operator):
         camera_name = context.scene.camera.name
         name = str(naming_scheme).replace("[Camera]", camera_name)
         name = name.replace("[DateTime]", get_date_time())
+        name = name.replace("[Filename]", os.path.splitext(bpy.path.basename(bpy.context.blend_data.filepath))[0])
         matches = re.finditer("\[.*?\|(.*?)\]", name)
         for m in matches:
             result = self.parse_complex_tag(m[0])
