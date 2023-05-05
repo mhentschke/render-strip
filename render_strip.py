@@ -260,6 +260,9 @@ class RENDER_PT_render_strip(bpy.types.Panel):
         col.use_property_split = True
         col.use_property_decorate = False
         col.prop(context.scene.rs_settings, "naming_scheme")
+        
+        row = layout.row()
+        row.operator('rs.add_all', text = "Add All Cameras as Strips")
 
         row = layout.row()
         row.template_list("RENDER_UL_render_strip_list", "", context.scene.rs_settings, "strips", context.scene.rs_settings, "active_index", rows=4 if len(context.scene.rs_settings.strips)>0 else 2)
@@ -309,6 +312,19 @@ class RENDER_PT_render_strip_settings(bpy.types.Panel):
         col.use_property_decorate = False
         col.prop(context.scene.render, "filepath")
         col.prop(context.scene.rs_settings, 'separate_dir')
+
+class OBJECT_OT_add_all_cameras_as_strips(bpy.types.Operator):
+    bl_idname = "rs.add_all"
+    bl_label = "Add All Cameras to New Strips"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        scene = context.scene
+        for ob in scene.objects:
+            if ob.type == "CAMERA":
+                context.scene.camera = ob
+                bpy.ops.rs.newstrip()
+        return {'FINISHED'}
 
 
 class OBJECT_OT_NewStrip(bpy.types.Operator):
