@@ -348,18 +348,21 @@ class OBJECT_OT_NewStrip(bpy.types.Operator):
         s = text.split("|")
         tag = s[0].lstrip("[").rstrip("]")
         s[-1] = s[-1].rstrip("]")
+        def parse_complex_regex_tag(s, target):
+            if len(s) >= 3:
+                return re.sub(s[1], s[2], target)
+            else:
+                return target
+            
         try:
             if tag == "Camera":
-                return context.scene.camera.name
+                return parse_complex_regex_tag(s, context.scene.camera.name)
             elif tag == "DateTime":
                 if len(s) == 1:
                     return get_date_time()
                 return get_date_time(format = s[1])
             elif tag == "Filename":
-                filename = os.path.splitext(bpy.path.basename(bpy.context.blend_data.filepath))[0]
-                if len(s) == 1:
-                    return filename
-                return re.sub(s[1], s[2], filename)
+                return parse_complex_regex_tag(s, os.path.splitext(bpy.path.basename(bpy.context.blend_data.filepath))[0])
             else: 
                 return text
         except:
