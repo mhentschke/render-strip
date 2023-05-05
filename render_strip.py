@@ -262,7 +262,10 @@ class RENDER_PT_render_strip(bpy.types.Panel):
         col.prop(context.scene.rs_settings, "naming_scheme")
         
         row = layout.row()
-        row.operator('rs.add_all', text = "Add All Cameras as Strips")
+        col = row.column(align=True)
+        col.operator('rs.add_all', text = "Add All Cameras")
+        col.operator('rs.add_all_collection', text = "Add from Collection")
+        col.operator('rs.add_all_selection', text = "Add Selected")
 
         row = layout.row()
         row.template_list("RENDER_UL_render_strip_list", "", context.scene.rs_settings, "strips", context.scene.rs_settings, "active_index", rows=4 if len(context.scene.rs_settings.strips)>0 else 2)
@@ -313,17 +316,40 @@ class RENDER_PT_render_strip_settings(bpy.types.Panel):
         col.prop(context.scene.render, "filepath")
         col.prop(context.scene.rs_settings, 'separate_dir')
 
-class OBJECT_OT_add_all_cameras_as_strips(bpy.types.Operator):
-    bl_idname = "rs.add_all"
-    bl_label = "Add All Cameras to New Strips"
-    bl_options = {"UNDO"}
-
-    def execute(self, context):
-        scene = context.scene
-        for ob in scene.objects:
+def add_cameras(context, list_of_objects):
+    for ob in list_of_objects:
             if ob.type == "CAMERA":
                 context.scene.camera = ob
                 bpy.ops.rs.newstrip()
+
+class OBJECT_OT_add_all_cameras_as_strips(bpy.types.Operator):
+    """Adds all cameras in scene as strips"""
+    bl_idname = "rs.add_all"
+    bl_label = "Add All Cameras"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        add_cameras(context, context.scene.objects)
+        return {'FINISHED'}
+
+class OBJECT_OT_add_all_cameras_from_collection(bpy.types.Operator):
+    """Adds all cameras in scene as strips"""
+    bl_idname = "rs.add_all_collection"
+    bl_label = "Add Cameras from Collection"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        add_cameras(context, context.collection.all_objects)
+        return {'FINISHED'}
+
+class OBJECT_OT_add_all_cameras_from_selection(bpy.types.Operator):
+    """Adds all cameras in scene as strips"""
+    bl_idname = "rs.add_all_selection"
+    bl_label = "Add Cameras from selection"
+    bl_options = {"UNDO"}
+
+    def execute(self, context):
+        add_cameras(context, context.selected_objects)
         return {'FINISHED'}
 
 
