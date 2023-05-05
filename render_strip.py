@@ -336,23 +336,30 @@ class OBJECT_OT_NewStrip(bpy.types.Operator):
     def parse_naming_scheme(self, context):
         naming_scheme = context.scene.rs_settings.naming_scheme
         camera_name = context.scene.camera.name
-        name = str(naming_scheme).replace("[Camera]", camera_name)
-        name = name.replace("[DateTime]", get_date_time())
-        name = name.replace("[Filename]", os.path.splitext(bpy.path.basename(bpy.context.blend_data.filepath))[0])
-        matches = re.finditer("\[.*?\|(.*?)\]", name)
+        name = str(naming_scheme)
+        matches = re.finditer("\[.*?\|*.*?\]", name)
         for m in matches:
-            result = self.parse_complex_tag(m[0])
+            result = self.parse_complex_tag(context, m[0])
             name = name.replace(m[0], result)
         
         return name
     
-    def parse_complex_tag(self, text):
+    def parse_complex_tag(self, context, text):
         s = text.split("|")
-        tag = s[0].lstrip("[")
+        tag = s[0].lstrip("[").rstrip("]")
         s[-1] = s[-1].rstrip("]")
         try:
-            if tag == "DateTime":
+            if tag == "Camera":
+                return context.scene.camera.name
+            elif tag == "DateTime":
+                if len(s) == 1:
+                    return get_date_time()
                 return get_date_time(format = s[1])
+            elif tag == "Filename":
+                filename = os.path.splitext(bpy.path.basename(bpy.context.blend_data.filepath))[0]
+                if len(s) == 1:
+                    return filename
+                return re.sub(s[1], s[2], filename)
             else: 
                 return text
         except:
