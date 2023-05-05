@@ -267,6 +267,7 @@ class RENDER_PT_render_strip(bpy.types.Panel):
         col.operator('rs.add_all_collection', text = "Add from Collection")
         col.operator('rs.add_all_selection', text = "Add Selected")
 
+        layout.separator()
         row = layout.row()
         row.template_list("RENDER_UL_render_strip_list", "", context.scene.rs_settings, "strips", context.scene.rs_settings, "active_index", rows=4 if len(context.scene.rs_settings.strips)>0 else 2)
         col = row.column(align=True)
