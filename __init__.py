@@ -7,7 +7,7 @@ bl_info = {
     "name": "Render Strip",
     "category": "Render",
     "blender": (2, 80, 0),
-    "author" : "Lucky Kadam <luckykadam94@gmail.com>",
+    "author" : "Lucky Kadam <luckykadam94@gmail.com>, Matheus Hentschke <matheushentschke@gmail.com",
     "version" : (1, 0, 2),
     "description" : "Render camera strips",
 }
@@ -32,3 +32,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+

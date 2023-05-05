@@ -3,7 +3,7 @@ import os
 from collections import OrderedDict
 import re
 
-from .utils import apply_render_settings, copy_render_settings, get_available_render_engines, get_available_render_engines_values, ShowMessageBox
+from .utils import apply_render_settings, copy_render_settings, get_available_render_engines, get_available_render_engines_values, ShowMessageBox, get_date_time
 
 
 class RenderStripOperator(bpy.types.Operator):
@@ -235,6 +235,7 @@ class RsSettings(bpy.types.PropertyGroup):
     separate_dir: bpy.props.BoolProperty(name="Separate Directories", description="Create separate directories for each strip", default=True)
     strips: bpy.props.CollectionProperty(type=RsStrip)
     active_index: bpy.props.IntProperty(default=0)
+    naming_scheme: bpy.props.StringProperty(name="Naming scheme", description="The naming scheme of the strips. Possible tags are: [Camera][DateTime][DateTime|format]", default = "[Camera]")
 
 
 class RENDER_UL_render_strip_list(bpy.types.UIList):
@@ -254,6 +255,11 @@ class RENDER_PT_render_strip(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        row = layout.row()
+        col = row.column(align=True)
+        col.use_property_split = True
+        col.use_property_decorate = False
+        col.prop(context.scene.rs_settings, "naming_scheme")
 
         row = layout.row()
         row.template_list("RENDER_UL_render_strip_list", "", context.scene.rs_settings, "strips", context.scene.rs_settings, "active_index", rows=4 if len(context.scene.rs_settings.strips)>0 else 2)
@@ -317,13 +323,41 @@ class OBJECT_OT_NewStrip(bpy.types.Operator):
             return {'CANCELLED'}
         strip = context.scene.rs_settings.strips.add()
         context.scene.rs_settings.active_index = len(context.scene.rs_settings.strips)-1
-        strip.name = "Strip"
         if context.scene.camera:
             strip.cam = context.scene.camera.name
+            strip.name = self.parse_naming_scheme(context)
+        else:
+            strip.name = "Strip"
         strip.start = context.scene.frame_start
         strip.end = context.scene.frame_end
         copy_render_settings(strip)
         return {'FINISHED'}
+
+    def parse_naming_scheme(self, context):
+        naming_scheme = context.scene.rs_settings.naming_scheme
+        camera_name = context.scene.camera.name
+        name = str(naming_scheme).replace("[Camera]", camera_name)
+        name = name.replace("[DateTime]", get_date_time())
+        matches = re.finditer("\[.*?\|(.*?)\]", name)
+        for m in matches:
+            result = self.parse_complex_tag(m[0])
+            name = name.replace(m[0], result)
+        
+        return name
+    
+    def parse_complex_tag(self, text):
+        s = text.split("|")
+        tag = s[0].lstrip("[")
+        s[-1] = s[-1].rstrip("]")
+        try:
+            if tag == "DateTime":
+                return get_date_time(format = s[1])
+            else: 
+                return text
+        except:
+            return text
+
+        
 
 
 class OBJECT_OT_DeleteStrip(bpy.types.Operator):

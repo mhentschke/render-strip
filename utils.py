@@ -1,4 +1,5 @@
 import bpy
+from datetime import datetime
 
 def apply_render_settings(render_engine,resolution_x,resolution_y,resolution_percentage,pixel_aspect_x,pixel_aspect_y):
     bpy.context.scene.render.engine = render_engine
@@ -31,3 +32,9 @@ def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
         self.layout.label(text=message)
 
     bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
+def get_date_time(format = None):
+    if not format:
+        return(datetime.now().strftime("%Y-%m-%d %H:%M"))
+    else:
+        return(datetime.now().strftime(format))
