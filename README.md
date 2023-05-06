@@ -20,7 +20,7 @@ You should now see Render Strip panel in Render Properties.
 ## Usage
 
 1. Optionally configure a naming scheme for the strips
-2. Create new strip by clicking on "+" button.
+2. Create new strip by clicking on "+" button. (Optionally you can bulk add multiple cameras as strips by using one of the Add buttons: "All Cameras", "Collection" and "Selection")
 3. Specify the camera, start frame and end frame.
 4. Select the output path.
 5. Hit Render.

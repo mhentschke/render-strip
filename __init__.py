@@ -7,7 +7,7 @@ bl_info = {
     "name": "Render Strip",
     "category": "Render",
     "blender": (2, 80, 0),
-    "author" : "Lucky Kadam <luckykadam94@gmail.com>, Matheus Hentschke <matheushentschke@gmail.com",
+    "author" : "Matheus Hentschke <matheushentschke@gmail.com, Lucky Kadam <luckykadam94@gmail.com>",
     "version" : (1, 0, 3),
     "description" : "Render camera strips",
 }
