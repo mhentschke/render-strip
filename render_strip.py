@@ -235,7 +235,7 @@ class RsSettings(bpy.types.PropertyGroup):
     separate_dir: bpy.props.BoolProperty(name="Separate Directories", description="Create separate directories for each strip", default=True)
     strips: bpy.props.CollectionProperty(type=RsStrip)
     active_index: bpy.props.IntProperty(default=0)
-    naming_scheme: bpy.props.StringProperty(name="Naming scheme", description="The naming scheme of the strips. Possible tags are: [Camera][DateTime][DateTime|format]", default = "[Camera]")
+    naming_scheme: bpy.props.StringProperty(name="Naming scheme", description="The naming scheme of the strips. Possible tags are: [Camera][DateTime][DateTime|format][Filename]. For FileName and Camera, Regex substitutions can be used using this sintax: [Tag|regex|repl]", default = "[Camera]")
 
 
 class RENDER_UL_render_strip_list(bpy.types.UIList):
@@ -263,9 +263,13 @@ class RENDER_PT_render_strip(bpy.types.Panel):
         
         row = layout.row()
         col = row.column(align=True)
-        col.operator('rs.add_all', text = "Add All Cameras")
-        col.operator('rs.add_all_collection', text = "Add from Collection")
-        col.operator('rs.add_all_selection', text = "Add Selected")
+        col.label(text="Add:")
+        col = row.column(align=True)
+        col.operator('rs.add_all', text = "All Cameras", icon = "VIEW_CAMERA")
+        col = row.column(align=True)
+        col.operator('rs.add_all_collection', text = "Collection", icon = "OUTLINER_COLLECTION")
+        col = row.column(align=True)
+        col.operator('rs.add_all_selection', text = "Selection", icon = "SELECT_SET")
 
         layout.separator()
         row = layout.row()
