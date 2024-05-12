@@ -10,3 +10,4 @@
 *.DS_STORE
 /render
 /render-strip
+/releases

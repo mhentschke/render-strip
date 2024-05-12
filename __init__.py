@@ -8,7 +8,7 @@ bl_info = {
     "category": "Render",
     "blender": (2, 80, 0),
     "author" : "Matheus Hentschke <matheushentschke@gmail.com, Lucky Kadam <luckykadam94@gmail.com>",
-    "version" : (1, 0, 3),
+    "version" : (1, 0, 4),
     "description" : "Render camera strips",
 }
 
